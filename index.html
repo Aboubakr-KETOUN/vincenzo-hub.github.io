@@ -3,9 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rask kber</title>
+    <title>QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: #4ade80;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid #4ade80;
+            border-radius: 10px;
+            padding: 2rem;
+            display: flex;
+            max-width: 800px;
+            width: 100%;
+        }
+        .input-section, .output-section {
+            flex: 1;
+            padding: 1rem;
+        }
+        input, button {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            border-radius: 4px;
+        }
+        button {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #4ade80;
+            color: black;
+        }
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .binary-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .binary {
+            position: absolute;
+            color: #4ade80;
+            opacity: 0.2;
+            font-size: 20px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+    </style>
 </head>
 <body>
-    <h1 style="color: rgb(255, 0, 0);text-align: center;">hi stalker</h1>
+    <div class="binary-bg" id="binaryBg"></div>
+    <div class="container">
+        <div class="input-section">
+            <h1>QR Code Generator</h1>
+            <input type="text" id="input" placeholder="Enter URL or text">
+            <button onclick="generateQR()">Generate QR Code</button>
+        </div>
+        <div class="output-section">
+            <div id="qrcode"></div>
+            <button onclick="downloadQR()">Download QR Code</button>
+            <button onclick="copyQR()">Copy QR Code</button>
+        </div>
+    </div>
+
+    <script>
+        function generateQR() {
+            const input = document.getElementById('input').value;
+            const qr = qrcode(0, 'H');
+            qr.addData(input);
+            qr.make();
+            document.getElementById('qrcode').innerHTML = qr.createImgTag(5);
+        }
+
+        function downloadQR() {
+            const img = document.querySelector('#qrcode img');
+            if (img) {
+                const link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = img.src;
+                link.click();
+            }
+        }
+
+        function copyQR() {
+            const img = document.querySelector('#qrcode img');
+            if (img) {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                canvas.toBlob(function(blob) {
+                    const item = new ClipboardItem({ 'image/png': blob });
+                    navigator.clipboard.write([item]).then(function() {
+                        alert('QR Code copied to clipboard!');
+                    }, function(err) {
+                        console.error('Could not copy QR Code: ', err);
+                    });
+                });
+            }
+        }
+
+        function createBinaryBackground() {
+            const bg = document.getElementById('binaryBg');
+            for (let i = 0; i < 100; i++) {
+                const span = document.createElement('span');
+                span.textContent = Math.round(Math.random()).toString();
+                span.style.left = `${Math.random() * 100}%`;
+                span.style.top = `${Math.random() * 100}%`;
+                span.style.animationDuration = `${Math.random() * 5 + 2}s`;
+                span.classList.add('binary');
+                bg.appendChild(span);
+            }
+        }
+
+        createBinaryBackground();
+        setInterval(() => {
+            document.querySelectorAll('.binary').forEach(el => {
+                el.textContent = Math.round(Math.random()).toString();
+            });
+        }, 100);
+    </script>
 </body>
 </html>
