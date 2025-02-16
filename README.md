@@ -1,5 +1,6 @@
 QR Code Generator
 A simple QR code generator with a Matrix-style theme. ✨ Generate, download, and copy QR codes easily! 🚀
+
 ⭐ Features
 
 🎯 Generate QR codes from text or URLs
