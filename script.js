@@ -48,10 +48,8 @@ function createBinaryBackground() {
     }
 }
 
-// Initialize the binary background
 createBinaryBackground();
 
-// Update binary numbers periodically
 setInterval(() => {
     document.querySelectorAll('.binary').forEach(el => {
         el.textContent = Math.round(Math.random()).toString();
