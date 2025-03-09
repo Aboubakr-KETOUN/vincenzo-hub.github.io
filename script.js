@@ -4,6 +4,7 @@ function generateQR() {
     qr.addData(input);
     qr.make();
     document.getElementById('qrcode').innerHTML = qr.createImgTag(5);
+    document.getElementById("output-section").style.display = "inline";
 }
 
 function downloadQR() {
